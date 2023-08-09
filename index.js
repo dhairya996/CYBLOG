@@ -40,7 +40,8 @@ app.post('/xyz', async(req, res) => {
        dataToSend = data.toString();
       });
       python.on('close', async(code) => {
-        var arr1 = dataToSend?.split(" ");
+        var arr1 = dataToSend ? dataToSend.split(" ") : [];
+
         console.log(`child process close all stdio with code ${code}`);
         let src1 = "test_clf_rep.png";
         let dest1 = `uploads/${namefile}_test_clf_rep.png`;
