@@ -29,6 +29,9 @@ export default Sidebar => {
       <a className="menu-item" href="/ids">
         IDS
       </a>
+      <a className="menu-item" href="/Website_Security_Assessment">
+        Website Security Assessment
+      </a>
     </Menu>
   );
 };
