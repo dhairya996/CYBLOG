@@ -19,7 +19,7 @@ import ViewBlog from "./pages/ViewBlog";
 import OtherUser from "./pages/OtherUser"
 import IdsPage from "./components/Form/idsPage";
 import BestModel from "./components/Form/bestModel";
-
+import Scan from "./pages/Scan"
 
 function App() {
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
@@ -213,7 +213,21 @@ function App() {
           }
         />
 
-          
+         <Route
+           path="/scan"
+           element={
+            <>
+              {cookies["UserId"] && (
+                <>
+                  <Scan/>
+                </>
+              )}
+              {!cookies["UserId"] && <Navigate to="/" />}
+
+            </>
+           }
+
+           />
       </Routes>
     </BrowserRouter>
   );
