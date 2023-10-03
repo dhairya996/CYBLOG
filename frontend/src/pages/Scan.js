@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useCookies } from "react-cookie";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { Oval } from "react-loader-spinner";
-import { api } from "../api";
+// import { api } from "../api";
 
 
 export default function Scan(){
     const [cookies, setCookie, removeCookie] = useCookies();
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
 
     const [formData, setFormData] = useState({
@@ -20,20 +20,25 @@ export default function Scan(){
         const handleSubmit = async (e) => {
         e.preventDefault();
  
-        // console.log(formData)
-        const newBlog = {
-          username: formData.username,
-          url: formData.url,
+        console.log(formData)
        
-        };
-        const params = {
-          username: cookies["UserId"],
-          token: cookies["AuthToken"],
-        };
         try {
           setLoading(true);
     
-        //   setLoading(false);
+          const res=await fetch('http://localhost:8000/scan', {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              url : formData.url
+            })
+          });
+          const data = await res.json();
+          console.log(data);
+
+
+          setLoading(false);
 
         } catch (e) {
           console.log(e.response.message);

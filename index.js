@@ -3,6 +3,8 @@ const cors = require("cors");
 const fs = require('fs');
 const fse = require('fs-extra');
 const {spawn} = require('child_process');
+const bodyParser = require('body-parser');
+// const zaproxy = require('zaproxy');
 require("./db/connection.js");
 const authRouter = require("./routers/auth.js");
 const messageRouter = require("./routers/messages.js");
@@ -10,6 +12,7 @@ const userRouter = require("./routers/users.js");
 const blogRouter = require("./routers/blogs.js");
 const app = express();
 
+app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json({ limit: "500mb" }));
 app.use(express.static(__dirname + '/uploads'));
@@ -17,16 +20,55 @@ app.use("/auth", authRouter);
 app.use("/messages", messageRouter);
 app.use("/users", userRouter);
 app.use("/blogs", blogRouter);
+
+
+
+
+
+
+app.post('/scan', async (req, res) => {
+  const { url } = req.body;
+
+  console.log(url);
+
+
+  try {
+
+    const pythonProcess = spawn('python', ['zapScan.py', url]);
+
+    pythonProcess.stdout.on('data', (data) => {
+      console.log(data.toString());
+    });
+  
+    pythonProcess.on('close', (code) => {
+      console.log(`Python script exited with code ${code}`);
+      // You can send a response to the client here if needed
+      res.json({ message: 'Scan completed' });
+      // res.send(data);
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send(error);
+  }
+});
+
+
+
+
+
 app.post('/xyz', async(req, res) => {
   console.log("hello")
   const { runstr } = req.body;
   // const userid=req.user._id;/
   // const founduser = await User.findById(userid);
-  try{var dataToSend;
-      var args= ['main.py'];
+  try{
+    var dataToSend;
+      var args = ['main.py'];
       var arr = runstr.split(" ");
-      arg=args.concat(arr);
-      let namefile="userid"+"-"+Date.now().toString();
+      var arg = args.concat(arr);
+      let namefile = "userid" + "-" + Date.now().toString();
+
   
       const obj={};
       obj['searchQuery']=runstr;
