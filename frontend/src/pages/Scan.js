@@ -3,11 +3,12 @@ import { useCookies } from "react-cookie";
 // import { useNavigate } from "react-router-dom";
 import { Oval } from "react-loader-spinner";
 // import { api } from "../api";
-
+import Report from "./ViewReport"
 
 export default function Scan(){
     const [cookies, setCookie, removeCookie] = useCookies();
     const [loading, setLoading] = useState(false);
+    const [reportData, setReportData] = useState(null); 
     // const navigate = useNavigate();
 
 
@@ -20,7 +21,7 @@ export default function Scan(){
         const handleSubmit = async (e) => {
         e.preventDefault();
  
-        console.log(formData)
+        // console.log(formData)
        
         try {
           setLoading(true);
@@ -35,8 +36,9 @@ export default function Scan(){
             })
           });
           const data = await res.json();
+          console.log("this is the received data")
           console.log(data);
-
+          setReportData(data);
 
           setLoading(false);
 
@@ -52,7 +54,7 @@ export default function Scan(){
         });
       };
 
-      console.log(formData);
+      // console.log(formData);
       if (loading) {
         return (
           <div className="flex justify-center items-center h-[100vh]">
@@ -96,6 +98,10 @@ export default function Scan(){
               Submit
             </button>
           </form>
+          
+          {
+          reportData && <Report reportData={reportData} />
+          } {/* Render the Report component */}
         </div>
       );
     

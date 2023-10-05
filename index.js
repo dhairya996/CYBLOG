@@ -35,15 +35,31 @@ app.post('/scan', async (req, res) => {
   try {
 
     const pythonProcess = spawn('python', ['zapScan.py', url]);
-
+    let resultData = ''; 
     pythonProcess.stdout.on('data', (data) => {
       console.log(data.toString());
+      const result = data.toString();
+
+      resultData = result; 
+    });
+
+    pythonProcess.stdout.on('end', () => {
+      try {
+        // Attempt to parse the accumulated data as JSON
+        const jsonData = JSON.parse(resultData);
+        res.json(jsonData);
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
     });
   
     pythonProcess.on('close', (code) => {
       console.log(`Python script exited with code ${code}`);
       // You can send a response to the client here if needed
-      res.json({ message: 'Scan completed' });
+      // res.json({ message: 'Scan completed' });
+      // res.json(resultData);
+        
       // res.send(data);
     });
 
