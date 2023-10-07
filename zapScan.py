@@ -5,7 +5,7 @@ import json
 from zapv2 import ZAPv2
 
 # The URL of the application to be tested
-target = 'http://artrise.byethost13.com/?i=1'
+target = sys.argv[1]
 # Change to match the API key set in ZAP, or use None if the API key is disabled
 apiKey = 'p7k01upida279hlhu3qtr74si3'
 
