@@ -26,7 +26,7 @@ export default function Scan(){
         try {
           setLoading(true);
     
-          const res=await fetch('http://localhost:8000/scan', {
+          const res = await fetch('http://localhost:8000/scan', {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -35,10 +35,10 @@ export default function Scan(){
               url : formData.url
             })
           });
-          const data = await res.json();
-          console.log("this is the received data")
-          console.log(data);
+          const data = await res.text();
           setReportData(data);
+          console.log("the received data is:- ");
+          console.log(data);
 
           setLoading(false);
 
@@ -100,7 +100,9 @@ export default function Scan(){
           </form>
           
           {
-          reportData && <Report reportData={reportData} />
+          reportData && 
+          <div className="mt-5" style={{ marginTop: '30px', marginBottom: '30px', marginLeft: '30px', marginRight: '30px' }} dangerouslySetInnerHTML={{ __html: reportData }} />
+
           } {/* Render the Report component */}
         </div>
       );

@@ -5,7 +5,7 @@ import json
 from zapv2 import ZAPv2
 
 # The URL of the application to be tested
-target = 'http://artrise.byethost13.com/?i=1'
+target = sys.argv[1]
 # Change to match the API key set in ZAP, or use None if the API key is disabled
 apiKey = 'p7k01upida279hlhu3qtr74si3'
 
@@ -29,16 +29,16 @@ while int(zap.spider.status(scanID)) < 100:
 
 time.sleep(2)
 
-# # print('Ajax Spider target {}'.format(target))
-# scanID = zap.ajaxSpider.scan(target)
+# # # print('Ajax Spider target {}'.format(target))
+scanID = zap.ajaxSpider.scan(target)
 
-# timeout = time.time() + 60*2   # 2 minutes from now
-# # Loop until the ajax spider has finished or the timeout has exceeded
-# while zap.ajaxSpider.status == 'running':
-#     if time.time() > timeout:
-#         break
-#     # print('Ajax Spider status' + zap.ajaxSpider.status)
-#     time.sleep(2)
+timeout = time.time() + 60*2   # 2 minutes from now
+# Loop until the ajax spider has finished or the timeout has exceeded
+while zap.ajaxSpider.status == 'running':
+    if time.time() > timeout:
+        break
+    # print('Ajax Spider status' + zap.ajaxSpider.status)
+    time.sleep(2)
 
 # # print('Ajax Spider completed')
 # ajaxResults = zap.ajaxSpider.results(start=0, count=10)
@@ -60,8 +60,9 @@ passive_scan_results = {
     # 'Report': zap.core.htmlreport()
 }
 
-report_html = zap.core.jsonreport()
+report_html = zap.core.htmlreport()
 
+print(report_html)
 # Save the report to a file
 with open('zap_report.html', 'w', encoding='utf-8') as html_file:
     html_file.write(report_html)
@@ -71,7 +72,7 @@ with open('zap_report.html', 'w', encoding='utf-8') as html_file:
 # print('HTML report saved as zap_report.html')
 # Serialize the results to JSON format
 json_result = json.dumps(passive_scan_results, indent=4)
-print(json_result)
+# print(json_result)
 
 # # Save the JSON report to a file
 # with open('zap_report.json', 'w') as json_file:
