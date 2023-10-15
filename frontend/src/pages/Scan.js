@@ -3,6 +3,7 @@ import { useCookies } from "react-cookie";
 import { Oval } from "react-loader-spinner";
 import Report from "./ViewReport";
 
+
 export default function Scan() {
   const [cookies] = useCookies();
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,33 @@ export default function Scan() {
   const [multipleWebsites, setMultipleWebsites] = useState([]);
   const [selectedWebsite, setSelectedWebsite] = useState(null);
   const [cachedReports, setCachedReports] = useState({});
+
+
+
+  const [htmlContent, setHtmlContent] = useState(''); // Assuming you have a way to set the HTML content
+
+  const generatePDF = async () => {
+    const response = await fetch('http://localhost:8000/generate-pdf', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ reportData }),
+    });
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'download.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -111,6 +139,7 @@ export default function Scan() {
   }, [selectedWebsite, cachedReports]);
 
   return (
+    
     <div className="onboarding bg-[#E1E9F4] bg-opacity-20">
       <h2 className="text-2xl md:text-3xl font-bold text-[#0287BF] text-center pt-8 pb-5">
         Scan Website
@@ -169,8 +198,27 @@ export default function Scan() {
           <Oval color="#0287BF" height={80} width={80} />
         </div>
       ) : (
-        reportData && 
-          <div className="mt-5" style={{ marginTop: '30px', marginBottom: '30px', marginLeft: '30px', marginRight: '30px' }} dangerouslySetInnerHTML={{ __html: reportData }} />
+        reportData &&
+        <div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '20vh' }}>
+      {/* Your React component that displays the HTML content */}
+      <button
+        style={{
+          padding: '10px 20px',
+          fontSize: '16px',
+          backgroundColor: '#007bff',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}
+        onClick={generatePDF}
+      >
+        Download as PDF
+      </button>
+    </div>
+          <div className="mt-5" style={{ marginTop: '10px', marginBottom: '30px', marginLeft: '30px', marginRight: '30px' }} dangerouslySetInnerHTML={{ __html: reportData }} />
+          </div>
       )}
     </div>
   );

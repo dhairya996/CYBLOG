@@ -12,6 +12,9 @@ const userRouter = require("./routers/users.js");
 const blogRouter = require("./routers/blogs.js");
 const app = express();
 
+const puppeteer = require('puppeteer');
+
+
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json({ limit: "500mb" }));
@@ -20,6 +23,27 @@ app.use("/auth", authRouter);
 app.use("/messages", messageRouter);
 app.use("/users", userRouter);
 app.use("/blogs", blogRouter);
+
+
+
+app.post('/generate-pdf', async (req, res) => {
+  const htmlContent = req.body.reportData; // Assuming you're sending the HTML content from the client
+
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+  await page.setContent(htmlContent);
+  
+
+  const pdfBuffer = await page.pdf({ format: 'A4' });
+
+  await browser.close();
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'attachment; filename=download.pdf');
+  res.send(pdfBuffer);
+});
+
+
 
 
 
