@@ -17,6 +17,13 @@ export default function Scan() {
   const [cachedReports, setCachedReports] = useState({});
 
 
+  const [showForm, setShowForm] = useState(true);
+
+  const handleBackClick = () => {
+    setShowForm(true);
+    window.location.reload(); // Reload the page
+  };
+    
 
   const [htmlContent, setHtmlContent] = useState(''); // Assuming you have a way to set the HTML content
 
@@ -80,6 +87,8 @@ export default function Scan() {
 }));
 }
 }
+
+      setShowForm(false);
       setLoading(false);
     } catch (e) {
       console.error(e);
@@ -141,10 +150,11 @@ export default function Scan() {
   return (
     
     <div className="onboarding bg-[#E1E9F4] bg-opacity-20">
-      <h2 className="text-2xl md:text-3xl font-bold text-[#0287BF] text-center pt-8 pb-5">
+       <h2 className="text-2xl md:text-3xl font-bold text-[#0287BF] text-center pt-8 pb-5">
         Scan Website
       </h2>
-      <form
+       {showForm ? (
+        <form
         className="justify-center w-[50%] ml-[25%] md:w-[36%] md:ml-[32%]"
         onSubmit={handleSubmit}
       >
@@ -171,8 +181,20 @@ export default function Scan() {
           {loading ? <Oval color="#FFFFFF" height={20} width={20} /> : "Submit"}
         </button>
       </form>
+      ) : (
+        <button
+          className="text-[#0287BF] px-4 py-2 absolute top-5 left-5"
+          onClick={handleBackClick}
+        >
+          Back
+        </button>
+      )}
 
-      {multipleWebsites.length > 0 && (
+      
+   
+     
+
+      {!showForm && multipleWebsites.length > 0 && (
         <div className="mt-4">
           <label htmlFor="selectWebsite" className="block text-start">
             Select Website:
@@ -198,7 +220,7 @@ export default function Scan() {
           <Oval color="#0287BF" height={80} width={80} />
         </div>
       ) : (
-        reportData &&
+        reportData && !showForm &&
         <div>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '20vh' }}>
       {/* Your React component that displays the HTML content */}
