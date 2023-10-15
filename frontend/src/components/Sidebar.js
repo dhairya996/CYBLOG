@@ -32,6 +32,10 @@ export default Sidebar => {
       <a className="menu-item" href="/Scan">
         Website Security Assessment
       </a>
+
+      <a className="menu-item" href="/WSA_Home_Page">
+            Security Asssessment Home
+      </a>
     </Menu>
   );
 };
