@@ -12,7 +12,7 @@ apiKey = 'p7k01upida279hlhu3qtr74si3'
 # By default ZAP API client will connect to port 8080
 zap = ZAPv2(apikey=apiKey)
 # Use the line below if ZAP is not listening on port 8080, for example, if listening on port 8090
-# zap = ZAPv2(apikey=apiKey, proxies={'http': 'http://127.0.0.1:8090', 'https': 'http://127.0.0.1:8090'})
+zap = ZAPv2(apikey=apiKey, proxies={'http': 'http://127.0.0.1:8081', 'https': 'http://127.0.0.1:8081'})
 
 # print('Spidering target {}'.format(target))
 # The scan returns a scan id to support concurrent scanning

@@ -34,7 +34,7 @@ app.post('/scan', async (req, res) => {
 
   try {
 
-    const pythonProcess = spawn('python', ['zapScan.py', url]);
+    const pythonProcess = spawn('python3', ['zapScan.py', url]);
     let resultData = ''; 
     pythonProcess.stdout.on('data', (data) => {
       console.log(data.toString());
