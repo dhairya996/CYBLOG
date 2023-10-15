@@ -43,17 +43,15 @@ export default function Scan() {
               url,
             }),
           });
-          const data = await res.json();
+          const data = await res.text();
           setReportData(data);
-
-          // Cache the report data
-          setCachedReports((prev) => ({
-            ...prev,
-            [url]: data,
-          }));
-        }
-      }
-
+ // Cache the report data
+ setCachedReports((prev) => ({
+  ...prev,
+  [url]: data,
+}));
+}
+}
       setLoading(false);
     } catch (e) {
       console.error(e);
@@ -91,7 +89,7 @@ export default function Scan() {
                 url: selectedWebsite,
               }),
             });
-            const data = await res.json();
+            const data = await res.text();
             setReportData(data);
 
             // Cache the report data
@@ -171,7 +169,8 @@ export default function Scan() {
           <Oval color="#0287BF" height={80} width={80} />
         </div>
       ) : (
-        reportData && <Report reportData={reportData} />
+        reportData && 
+          <div className="mt-5" style={{ marginTop: '30px', marginBottom: '30px', marginLeft: '30px', marginRight: '30px' }} dangerouslySetInnerHTML={{ __html: reportData }} />
       )}
     </div>
   );

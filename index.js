@@ -24,50 +24,87 @@ app.use("/blogs", blogRouter);
 
 
 
-
-
 app.post('/scan', async (req, res) => {
   const { url } = req.body;
 
   console.log(url);
-
 
   try {
 
     const pythonProcess = spawn('python3', ['zapScan.py', url]);
     let resultData = ''; 
     pythonProcess.stdout.on('data', (data) => {
-      console.log(data.toString());
+      // console.log(data.toString());
       const result = data.toString();
 
-      resultData = result; 
+      resultData+=result; 
+
+      console.log("the received data is:- ");
+      console.log(resultData);
+      console.log("the above data is the received data");
     });
 
     pythonProcess.stdout.on('end', () => {
-      try {
-        // Attempt to parse the accumulated data as JSON
-        const jsonData = JSON.parse(resultData);
-        res.json(jsonData);
-      } catch (error) {
-        console.error('Error parsing JSON:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
+      // Send the HTML data as response
+      console.log("the received data on end is:- ");
+      console.log(resultData);
+      console.log("the above data is the received data");
+      res.send(resultData);
     });
   
     pythonProcess.on('close', (code) => {
       console.log(`Python script exited with code ${code}`);
-      // You can send a response to the client here if needed
-      // res.json({ message: 'Scan completed' });
-      // res.json(resultData);
-        
-      // res.send(data);
     });
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error(error);
     res.status(500).send(error);
   }
 });
+
+
+// app.post('/scan', async (req, res) => {
+//   const { url } = req.body;
+
+//   console.log(url);
+
+
+//   try {
+
+//     const pythonProcess = spawn('python', ['zapScan.py', url]);
+//     let resultData = ''; 
+//     pythonProcess.stdout.on('data', (data) => {
+//       console.log(data.toString());
+//       const result = data.toString();
+
+//       resultData = result; 
+//     });
+
+//     pythonProcess.stdout.on('end', () => {
+//       try {
+//         // Attempt to parse the accumulated data as JSON
+//         const jsonData = JSON.parse(resultData);
+//         res.json(jsonData);
+//       } catch (error) {
+//         console.error('Error parsing JSON:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//       }
+//     });
+  
+//     pythonProcess.on('close', (code) => {
+//       console.log(`Python script exited with code ${code}`);
+//       // You can send a response to the client here if needed
+//       // res.json({ message: 'Scan completed' });
+//       // res.json(resultData);
+        
+//       // res.send(data);
+//     });
+
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(500).send(error);
+//   }
+// });
 
 
 
