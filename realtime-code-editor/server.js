@@ -61,6 +61,14 @@ io.on('connection', (socket) => {
         delete userSocketMap[socket.id];
         socket.leave();
     });
+
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg); // Broadcast the message to all connected clients
+    });
+
+    socket.on('uploadPdf', (pdfData) => {
+        io.emit('newPdf', pdfData);
+      });
 });
 
 const PORT = process.env.PORT || 5000;

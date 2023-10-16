@@ -3,7 +3,10 @@ import toast from 'react-hot-toast';
 import ACTIONS from '../Actions';
 import Client from '../components/Client';
 import Editor from '../components/Editor';
+import Chat from '../components/Chat';
+import FileUpload from '../components/FileUpload';
 import { initSocket } from '../socket';
+import BottomNavigation from '../components/BottomNavigation';
 import {
     useLocation,
     useNavigate,
@@ -18,6 +21,13 @@ const EditorPage = () => {
     const { roomId } = useParams();
     const reactNavigator = useNavigate();
     const [clients, setClients] = useState([]);
+    const [selectedComponent, setSelectedComponent] = useState('Chat');
+    const [selectedTab, setSelectedTab] = useState('chat');
+
+  const handleTabChange = (tab) => {
+    setSelectedTab(tab);
+  };
+
 
     useEffect(() => {
         const init = async () => {
@@ -105,6 +115,7 @@ const EditorPage = () => {
                             />
                         ))}
                     </div>
+                    
                 </div>
                 <button className="btn copyBtn" onClick={copyRoomId}>
                     Copy Editor ID
@@ -113,7 +124,7 @@ const EditorPage = () => {
                     Leave
                 </button>
             </div>
-            <div className="editorWrap">
+            <div className="editorWrap scrollable-content middle-column">
                 <Editor
                     socketRef={socketRef}
                     roomId={roomId}
@@ -122,7 +133,21 @@ const EditorPage = () => {
                     }}
                 />
             </div>
-        </div>
+            <div>
+            <div style={{ height: '50vh' }}>
+      <div style={{ display: selectedTab === 'chat' ? 'block' : 'none' }}>
+        <Chat socketRef={socketRef} username={location.state?.username} />
+      </div>
+      <div style={{ display: selectedTab === 'fileUpload' ? 'block' : 'none' }}>
+        <FileUpload socket={socketRef} />
+        
+      </div>
+      <BottomNavigation onSelectTab={handleTabChange} selectedTab={selectedTab} />
+    </div>
+
+      
+    </div>
+    </div>
     );
 };
 
