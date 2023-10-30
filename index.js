@@ -15,7 +15,7 @@ const app = express();
 const puppeteer = require('puppeteer');
 
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '500mb' }));
 app.use(cors());
 app.use(express.json({ limit: "500mb" }));
 app.use(express.static(__dirname + '/uploads'));
@@ -24,6 +24,37 @@ app.use("/messages", messageRouter);
 app.use("/users", userRouter);
 app.use("/blogs", blogRouter);
 
+app.post('/getCodeAndSolutions', (req, res) => {
+  const jsonReport = req.body; // Assuming jsonReport is already parsed
+
+  // Define the conditions for extraction
+  const conditions = [
+    { pluginid: "10038" },  // Example condition: extract alerts with pluginid 10038
+    // Add more conditions as needed
+  ];
+
+  // Extract alerts based on the conditions
+  const extractedData = jsonReport[0].alerts.filter(alert => {
+    return conditions.some(condition => {
+      return Object.keys(condition).every(key => alert[key] === condition[key]);
+    });
+  });
+
+  // Create a structured string from extractedData
+  const reportString = extractedData.map(alert => {
+    return `Alert Name: ${alert.name}, Evidence: ${alert.instances.map(instance => instance.evidence).join(', ')}, Solution: ${alert.solution}\n`;
+  }).join('');
+
+  // Create a Buffer from the string
+  const buffer = Buffer.from(reportString, 'utf-8');
+
+  // Set headers to specify the file type and name
+  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Content-Disposition', 'attachment; filename=report.txt');
+
+  // Send the buffer as the response
+  res.send(buffer);
+});
 
 
 app.post('/generate-pdf', async (req, res) => {
@@ -55,7 +86,7 @@ app.post('/scan', async (req, res) => {
 
   try {
 
-    const pythonProcess = spawn('python3', ['zapScan.py', url]);
+    const pythonProcess = spawn('python', ['zapScan.py', url]);
     let resultData = ''; 
     pythonProcess.stdout.on('data', (data) => {
       // console.log(data.toString());
@@ -70,10 +101,13 @@ app.post('/scan', async (req, res) => {
 
     pythonProcess.stdout.on('end', () => {
       // Send the HTML data as response
-      console.log("the received data on end is:- ");
-      console.log(resultData);
-      console.log("the above data is the received data");
-      res.send(resultData);
+      const jsonResult = JSON.parse(resultData);
+      res.json(jsonResult);
+      // console.log(resultData);
+      // console.log("the received data on end is:- ");
+      // console.log(resultData);
+      // console.log("the above data is the received data");
+      // res.send(resultData);
     });
   
     pythonProcess.on('close', (code) => {

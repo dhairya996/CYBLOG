@@ -8,6 +8,8 @@ export default function Scan() {
   const [cookies] = useCookies();
   const [loading, setLoading] = useState(false);
   const [reportData, setReportData] = useState(null);
+  const [htmlReport, sethtmlReport] = useState(null);
+  const [jsonReport, setjsonReport] = useState(null);
   const [formData, setFormData] = useState({
     username: cookies.UserId,
     url: "",
@@ -20,12 +22,37 @@ export default function Scan() {
   const [showForm, setShowForm] = useState(true);
 
   const handleBackClick = () => {
-    setShowForm(true);
     window.location.reload(); // Reload the page
+    setShowForm(true);
   };
     
 
   const [htmlContent, setHtmlContent] = useState(''); // Assuming you have a way to set the HTML content
+
+  const getCodeAndSolutions = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/getCodeAndSolutions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({jsonReport})
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'report.txt';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const generatePDF = async () => {
     const response = await fetch('http://localhost:8000/generate-pdf', {
@@ -78,8 +105,14 @@ export default function Scan() {
               url,
             }),
           });
-          const data = await res.text();
-          setReportData(data);
+          const data = await res.json();
+          console.log(data);
+          // console.log(data.html_report);
+          console.log(data.json_report);
+          sethtmlReport(data.html_report);
+          setjsonReport(data.jsonReport);
+          setReportData(data.html_report);
+          // console.log(reportData);
  // Cache the report data
  setCachedReports((prev) => ({
   ...prev,
@@ -126,8 +159,13 @@ export default function Scan() {
                 url: selectedWebsite,
               }),
             });
-            const data = await res.text();
-            setReportData(data);
+
+            const data = await res.json();
+            // console.log(data.html_report);
+            console.log(data.json_report);
+            sethtmlReport(data.html_report);
+            setjsonReport(data.jsonReport);
+            setReportData(data.html_report);
 
             // Cache the report data
             setCachedReports((prev) => ({
@@ -222,7 +260,7 @@ export default function Scan() {
       ) : (
         reportData && !showForm &&
         <div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '20vh' }}>
+      <div style={{ display: 'flex', flexDirection:'column', justifyContent: 'center', alignItems: 'center', height: '20vh' }}>
       {/* Your React component that displays the HTML content */}
       <button
         style={{
@@ -238,6 +276,22 @@ export default function Scan() {
       >
         Download as PDF
       </button>
+      <div className="mt-5">
+      <button
+        style={{
+          padding: '10px 20px',
+          fontSize: '16px',
+          backgroundColor: '#007bff',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}
+        onClick={getCodeAndSolutions}
+      >
+        Download Vulnerable Code and Solutions
+      </button>
+      </div>
     </div>
           <div className="mt-5" style={{ marginTop: '10px', marginBottom: '30px', marginLeft: '30px', marginRight: '30px' }} dangerouslySetInnerHTML={{ __html: reportData }} />
           </div>
