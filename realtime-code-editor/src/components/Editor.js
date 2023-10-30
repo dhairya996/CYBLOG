@@ -10,6 +10,7 @@ import ACTIONS from '../Actions';
 const Editor = ({ socketRef, roomId, onCodeChange }) => {
     const editorRef = useRef(null);
     useEffect(() => {
+        console.log("Socket ka referecne ",socketRef);
         async function init() {
             editorRef.current = Codemirror.fromTextArea(
                 document.getElementById('realtimeEditor'),
@@ -85,9 +86,39 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
         document.body.removeChild(event.target);
         }
 
-
-
+        const handleFileUpload = (event) => {
+            const fileInput = event.target;
+            const selectedFile = fileInput.files[0];
     
+            if (selectedFile) {
+                const reader = new FileReader();
+    
+                reader.onload = (e) => {
+                    const fileContent = e.target.result;
+                    editorRef.current.setValue(fileContent); // Set the file content in CodeMirror
+                };
+                
+                reader.readAsText(selectedFile);
+            }
+            insertText(' ');
+            triggerButtonClick('Enter');
+        };
+
+        const insertText = (text) => {
+            if (editorRef.current) {
+                editorRef.current.replaceSelection(text);
+            }
+        };
+        function triggerButtonClick(buttonId) {
+            const button = document.getElementById(buttonId);
+        
+            if (button) {
+                button.click(); // Simulate a button click
+            } else {
+                console.error(`Button with ID "${buttonId}" not found.`);
+            }
+        }
+        
 
     return (
         <div style={{"height":"100vh"}}>
@@ -96,6 +127,14 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
             <input id="filename" type="text"
                         className="inputBox"
                         placeholder="Specify a filename" />
+
+<input
+                type="file"
+                id="fileInput"
+                className='inputBox'
+                onChange={handleFileUpload}
+                accept=".js, .txt, .html, .java, .cpp, .c, .py" // Specify the allowed file types
+            />
         </div>
     
     )
