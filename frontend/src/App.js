@@ -21,6 +21,7 @@ import IdsPage from "./components/Form/idsPage";
 import BestModel from "./components/Form/bestModel";
 import Scan from "./pages/Scan"
 import WSA_Home from  "./webSecurityAssessment/pages/Home" 
+import WSA_Learn from "./webSecurityAssessment/LearnVuln/Learn"
 
 function App() {
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
@@ -257,6 +258,23 @@ function App() {
                 <>
                 
                   <WSA_Home/>
+                </>
+              )}
+              {!cookies["UserId"] && <Navigate to="/" />}
+
+            </>
+           }
+
+           />
+
+          <Route
+           path="/Learn"
+           element={
+            <>
+              {cookies["UserId"] && (
+                <>
+                
+                  <WSA_Learn/>
                 </>
               )}
               {!cookies["UserId"] && <Navigate to="/" />}

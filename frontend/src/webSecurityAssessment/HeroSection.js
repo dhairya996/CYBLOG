@@ -11,25 +11,7 @@ function HeroSection() {
       <video src={backVid} autoPlay loop muted />
       {/* <img src={skyGif} alt='Background GIF' className='background-gif' /> */}
       <h1>WEB SECURITY ASSESSMENT</h1>
-      <p> Scan Websites, Perform active and Passive Scans, and Collaborate to remove Vulnerabilities</p>
-      <div className='hero-btns'>
-        <Button
-          className='btns'
-          buttonStyle='btn--outline'
-          buttonSize='btn--large'
-        >
-          GET STARTED
-        </Button>
-        <Button
-          className='btns'
-          buttonStyle='btn--primary'
-          buttonSize='btn--large'
-          onClick={console.log('hey')}
-        >
-          WATCH TRAILER <i className='far fa-play-circle' />
-        </Button>
-
-      </div>
+      <h2> Scan Websites, Perform active and Passive Scans, and Collaborate to remove Vulnerabilities </h2>
     </div>
   );
 }
