@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { Oval } from "react-loader-spinner";
 import Report from "./ViewReport";
+import HeroSection from './HeroSection.js'
+import Footer from './Footer.js'
 
 export default function Scan() {
   const [cookies] = useCookies();
@@ -218,10 +220,12 @@ export default function Scan() {
   }, [selectedWebsite, cachedReports]);
 
   return (
-    <div className="onboarding bg-[#E1E9F4] bg-opacity-20">
-      <h2 className="text-2xl md:text-3xl font-bold text-[#0287BF] text-center pt-8 pb-5">
-        Scan Website
-      </h2>
+    <>
+    <HeroSection />
+    <div className="onboarding bg-[#E1E9F4] bg-opacity-70">
+    <h2 className="text-3xl md:text-4xl font-semibold text-[#2f2e41] text-center pt-8 pb-5">
+      Scan Website
+    </h2>
       {showForm ? (
         <form
           className="justify-center w-[50%] ml-[25%] md:w-[36%] md:ml-[32%]"
@@ -244,7 +248,7 @@ export default function Scan() {
           </section>
 
           <button
-            className="text-white bg-[#0287BF] px-4 py-2 md:px-6 md:py-3 m-2 rounded-full font-semibold w-fit text-lg md:text-xl cursor-pointer"
+            className="text-white bg-[#0287BF] px-4 py-2 md:px-6 md:py-3 m-2 rounded-full font-semibold w-fit text-lg md:text-xl cursor-pointer block mx-auto"
             disabled={loading} // Disable the button when loading is true
           >
             {loading ? (
@@ -368,5 +372,7 @@ export default function Scan() {
         )
       )}
     </div>
+    <Footer />
+    </>
   );
 }
