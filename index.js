@@ -12,10 +12,16 @@ const userRouter = require("./routers/users.js");
 const blogRouter = require("./routers/blogs.js");
 const app = express();
 
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
 
+// const express = require('express');
+// const bodyParser = require('body-parser');
 
-app.use(bodyParser.json());
+// Express 4.0
+app.use(bodyParser.json({ limit: "500mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "500mb" }));
+
+// app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json({ limit: "500mb" }));
 app.use(express.static(__dirname + "/uploads"));
@@ -24,42 +30,48 @@ app.use("/messages", messageRouter);
 app.use("/users", userRouter);
 app.use("/blogs", blogRouter);
 
-app.post('/getCodeAndSolutions', (req, res) => {
+app.post("/getCodeAndSolutions", (req, res) => {
   const jsonReport = req.body; // Assuming jsonReport is already parsed
 
   // Define the conditions for extraction
   const conditions = [
-    { pluginid: "10038" },  // Example condition: extract alerts with pluginid 10038
+    { pluginid: "10038" }, // Example condition: extract alerts with pluginid 10038
     // Add more conditions as needed
   ];
 
   // Extract alerts based on the conditions
-  const extractedData = jsonReport[0].alerts.filter(alert => {
-    return conditions.some(condition => {
-      return Object.keys(condition).every(key => alert[key] === condition[key]);
+  const extractedData = jsonReport[0].alerts.filter((alert) => {
+    return conditions.some((condition) => {
+      return Object.keys(condition).every(
+        (key) => alert[key] === condition[key]
+      );
     });
   });
 
   // Create a structured string from extractedData
-  const reportString = extractedData.map(alert => {
-    return `Alert Name: ${alert.name}, Evidence: ${alert.instances.map(instance => instance.evidence).join(', ')}, Solution: ${alert.solution}\n`;
-  }).join('');
+  const reportString = extractedData
+    .map((alert) => {
+      return `Alert Name: ${alert.name}, Evidence: ${alert.instances
+        .map((instance) => instance.evidence)
+        .join(", ")}, Solution: ${alert.solution}\n`;
+    })
+    .join("");
 
   // Create a Buffer from the string
-  const buffer = Buffer.from(reportString, 'utf-8');
+  const buffer = Buffer.from(reportString, "utf-8");
 
   // Set headers to specify the file type and name
-  res.setHeader('Content-Type', 'text/plain');
-  res.setHeader('Content-Disposition', 'attachment; filename=report.txt');
+  res.setHeader("Content-Type", "text/plain");
+  res.setHeader("Content-Disposition", "attachment; filename=report.txt");
 
   // Send the buffer as the response
   res.send(buffer);
 });
 
-
-app.post('/generate-pdf', async (req, res) => {
-  const htmlContent = req.body.reportData; // Assuming you're sending the HTML content from the client
-
+app.post("/generate-pdf", async (req, res) => {
+  console.log("Hellllo" + req);
+  const htmlContent = req.body.htmlReport; // Assuming you're sending the HTML content from the client
+  console.log(htmlContent);
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
   await page.setContent(htmlContent);
@@ -79,10 +91,9 @@ app.post("/scan", async (req, res) => {
   console.log(url);
 
   try {
-
-    const pythonProcess = spawn('python', ['zapScan.py', url]);
-    let resultData = ''; 
-    pythonProcess.stdout.on('data', (data) => {
+    const pythonProcess = spawn("python", ["zapScan.py", url]);
+    let resultData = "";
+    pythonProcess.stdout.on("data", (data) => {
       // console.log(data.toString());
       const result = data.toString();
 
